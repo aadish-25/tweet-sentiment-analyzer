@@ -1,82 +1,86 @@
 # Tweet Sentiment Analysis System
 
-An Information Retrieval mini project designed for the **Information Retrieval** curriculum (**Savitribai Phule Pune University - SPPU**).
+An Information Retrieval mini project developed for the **Information Retrieval** curriculum (**Savitribai Phule Pune University - SPPU**).
 
-This system provides **real-time Sentiment Analysis for Tweets** (supporting direct text or live public Twitter/X URLs) powered by a **TF-IDF Vector Space Model** and **Logistic Regression**, paired with **100% genuine, computed model evaluation metrics**.
-
----
-
-## 🚀 Key Features
-
-1. **Dual-Mode Tweet Sentiment Analyzer:**
-   - **Direct Tweet Text:** Input any tweet or sentence for immediate classification.
-   - **Live Tweet URL:** Paste any public `twitter.com` or `x.com` status link (e.g. `https://x.com/jack/status/20`). The system fetches tweet text and author metadata via Twitter's public oEmbed service with zero API keys required.
-   - **Feature Attribution (IR Term Weights):** Identifies and displays the key vocabulary words present in the tweet that drove the prediction, along with their model coefficient weights.
-   - **Class Probabilities Breakdown:** Live probability distribution across Positive, Negative, and Neutral sentiment.
-
-2. **Real Model Evaluation & Performance Metrics (Zero Dummy Data):**
-   - Evaluated on a real held-out test split of **2,400 tweets** (20% of 12,000 balanced benchmark tweets from the Cardiff NLP TweetEval benchmark).
-   - **Real Metrics Computed:**
-     - **Test Accuracy:** 61.00% (1,464 / 2,400 correct)
-     - **Macro F1-Score:** 61.06%
-     - **ROC-AUC (One-vs-Rest):** 0.7889
-     - **Cross-Entropy Log Loss:** 0.8554
-   - **Real Classification Report:** Precision, Recall, F1, and Support per class (800 negative, 800 neutral, 800 positive).
-   - **Real Confusion Matrix:** Complete actual vs. predicted counts matrix.
-   - **Real Test Sample Predictions Inspector:** Interactive table inspecting 100 actual test tweets with ground truth label, predicted label, confidence, and correctness verification (filter by All, Correctly Classified, or Misclassified).
+This system provides **dual-model Sentiment Analysis for Tweets** (supporting direct text or live public Twitter/X URLs) using both **Logistic Regression** and **Multinomial Naive Bayes** over a **TF-IDF Vector Space Model**, along with real, computed evaluation metrics.
 
 ---
 
-## 📚 Mapping to the Information Retrieval Syllabus
+## Key Features
 
-| Syllabus Unit | Concept Implemented in Project | Implementation Details |
-|---|---|---|
-| **Unit I: Basic IR Models** | Vector Space Model (TF-IDF Weighting) | Scikit-learn `TfidfVectorizer` with sublinear TF scaling ($1 + \log(tf)$) and L2 length normalization |
-| **Unit IV: Categorization & Filtering** | Supervised Probabilistic Classification | Multi-class `LogisticRegression` minimizing cross-entropy loss, feature term weight attribution |
-| **Unit V: Measuring Effectiveness** | Comprehensive Evaluation Metrics | Test Accuracy, Macro F1, One-vs-Rest ROC-AUC, Log Loss, Confusion Matrix, and Error Inspection |
-| **Unit VI: Web Data Ingestion** | Live Web Scraping / Extraction | Twitter/X oEmbed integration and `BeautifulSoup` HTML parsing |
+1. **Dual-Model Sentiment Inference:**
+   - Evaluates any tweet using both **Logistic Regression** and **Multinomial Naive Bayes** simultaneously.
+   - Provides predicted sentiment labels and class probability distributions for direct comparison.
+
+2. **Live URL Extraction (No API Keys Needed):**
+   - Supports direct text input or public Twitter / X URLs (e.g., `https://x.com/jack/status/20`).
+   - Fetches live tweet text using Twitter's official oEmbed service and parses HTML via BeautifulSoup.
+
+3. **Dedicated Offline Training (`train.py`):**
+   - Clean, modular training script: trains vectorizer and both models once, then stores them to disk using `joblib`.
+   - The web dashboard (`app.py`) loads pre-trained artifacts instantly without retraining on launch.
+
+4. **Real Evaluation Metrics Comparison:**
+   - Evaluated on a held-out test split of 2,400 tweets (20% stratified test split).
+   - Direct comparison of **Accuracy**, **Precision (Macro)**, **Recall (Macro)**, **F1-Score (Macro)**, and **Log Loss**.
+
+5. **Custom Dataset Support:**
+   - Drop in any custom CSV file via terminal (`python train.py --data <file.csv>`) or directly in the web dashboard.
+   - Intelligent auto-detection of text and sentiment columns.
 
 ---
 
-## 🛠️ Project Structure
+## Project Structure
 
 ```
 charming-planck/
+├── config.py                     # Central configuration (paths, hyperparameters, test split ratio)
+├── train.py                      # Dedicated training script for Logistic Regression & Naive Bayes
+├── app.py                        # Streamlit web dashboard (clean UI, no sidebar, dual model comparison)
 ├── data/
-│   ├── download_data.py            # Dataset ingestion & offline fallback
-│   └── tweets.csv                  # 12,000 balanced benchmark tweets
-├── models/                         # Pre-trained, cached models (instant startup)
-│   ├── sentiment_classifier.joblib 
-│   ├── tfidf_vectorizer.joblib    
-│   └── evaluation_metrics.joblib   
+│   ├── download_data.py          # Script to fetch/cache the 12,000 benchmark tweet dataset
+│   └── tweets.csv                # 12,000 balanced benchmark tweets (Cardiff NLP TweetEval)
+├── models/                       # Serialized joblib artifacts
+│   ├── logistic_regression.joblib
+│   ├── naive_bayes.joblib
+│   ├── tfidf_vectorizer.joblib
+│   └── evaluation_metrics.joblib
 ├── src/
-│   ├── tweet_fetcher.py            # Extracts tweet text from direct input or Twitter/X URLs
-│   └── sentiment_model.py          # Scikit-learn TF-IDF + Logistic Regression classification engine
-├── app.py                          # Streamlit web dashboard
-├── requirements.txt                # Dependencies
-└── README.md                       # Documentation and setup instructions
+│   ├── tweet_fetcher.py          # URL and text extraction module
+│   └── sentiment_model.py        # Inference engine loading pre-trained models
+├── requirements.txt              # Python dependencies
+└── README.md                     # Documentation
 ```
 
 ---
 
-## 💻 Installation & Quickstart
+## How Model Storage Works
+
+Trained models are serialized to disk using **`joblib`**:
+- `joblib.dump(lr_model, "models/logistic_regression.joblib")`
+- `joblib.dump(nb_model, "models/naive_bayes.joblib")`
+- `joblib.dump(vectorizer, "models/tfidf_vectorizer.joblib")`
+- `joblib.dump(metrics, "models/evaluation_metrics.joblib")`
+
+When `app.py` runs, it simply loads these binary `.joblib` files into memory in 0.05 seconds. It does not re-train every time you launch the app.
+
+---
+
+## How to Run
 
 ### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Application
+### 2. Train Models (Terminal)
+```bash
+python train.py
+```
+*(To train on a custom dataset, run `python train.py --data path/to/your_file.csv`)*
+
+### 3. Launch Web Dashboard
 ```bash
 streamlit run app.py
 ```
-Open **`http://127.0.0.1:8501`** in your browser.
-
----
-
-## 🧪 Sample Inputs for Demo / Viva
-
-- **Sample URL:** `https://x.com/jack/status/20`
-- **Sample Positive:** `"Love the incredible battery life and crisp display quality on this device!"`
-- **Sample Negative:** `"Worst customer support ever, flight delayed by 6 hours without any food or refund."`
-- **Sample Neutral:** `"The annual developer conference will take place this Thursday at 10 AM."`
+Open `http://127.0.0.1:8501` in your browser.
