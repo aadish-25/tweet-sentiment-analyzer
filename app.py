@@ -1,69 +1,64 @@
 import os
-import time
 import pandas as pd
 import streamlit as st
 import altair as alt
 
 from src.tweet_fetcher import extract_tweet_input
 from src.sentiment_model import SentimentEngine
-from src.search_engine import IRSearchEngine
 
 # Page configuration
 st.set_page_config(
-    page_title="Tweet Sentiment & IR System",
-    page_icon="🔎",
+    page_title="Tweet Sentiment Analysis System",
+    page_icon="🐦",
     layout="wide",
 )
 
 DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "tweets.csv")
 
 
-@st.cache_resource(show_spinner="Loading models and search index...")
+@st.cache_resource(show_spinner="Loading sentiment model...")
 def load_resources():
     sentiment_engine = SentimentEngine()
     metrics = sentiment_engine.train(DATA_PATH)
-    search_engine = IRSearchEngine(DATA_PATH)
-    return sentiment_engine, search_engine, metrics
+    return sentiment_engine, metrics
 
 
-# Load engines
-sentiment_engine, search_engine, metrics = load_resources()
+# Load engine and verified evaluation metrics
+sentiment_engine, metrics = load_resources()
 
-# Sidebar: System Summary and Sample Inputs
+# Sidebar: System Overview
 with st.sidebar:
     st.title("⚙️ System Overview")
     st.markdown("**Information Retrieval Mini Project**")
     st.markdown(
         """
-        - **Model:** TF-IDF Vector Space + Logistic Regression
-        - **Vocabulary:** 12,000 features (unigrams + bigrams)
-        - **Index Corpus:** 12,000 balanced tweets
-        - **Input Modes:** Direct text or live Tweet/X URL
+        - **Topic:** Tweet Sentiment Analysis System
+        - **Pipeline:** TF-IDF Representation + Logistic Regression
+        - **Dataset:** 12,000 Balanced Benchmark Tweets
+        - **Vocabulary:** 8,000 n-gram features
         """
     )
     st.divider()
 
-    st.subheader("💡 Quick Test Presets")
-    st.caption("Click any preset to copy into the analyzer:")
+    st.subheader("💡 Sample Inputs")
+    st.caption("Click to copy and test in the analyzer:")
     st.code("https://x.com/jack/status/20", language="text")
     st.code("Worst customer service, delayed flight and lost luggage!", language="text")
     st.code("Love this incredible camera quality and battery life!", language="text")
 
     st.divider()
-    stats = search_engine.get_stats()
-    st.metric("Indexed Documents", f"{stats['total_documents']:,}")
     st.metric("Test Accuracy", f"{metrics['accuracy'] * 100:.2f}%")
+    st.metric("ROC-AUC Score", f"{metrics['roc_auc']:.4f}")
 
-# Main Title
-st.title("🔎 Tweet Sentiment Analysis & IR Search Engine")
+# Main Header
+st.title("🐦 Tweet Sentiment Analysis System")
 st.caption(
-    "A dual-purpose Information Retrieval system: Fetch & analyze live tweets by URL or text, and perform ranked retrieval with sentiment filtering."
+    "Information Retrieval Project: Analyze sentiment from custom text or public Twitter/X URLs with real model evaluation."
 )
 
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2 = st.tabs([
     "🧪 Tweet Sentiment Analyzer (Text or URL)",
-    "🔍 IR Tweet Search & Filter",
-    "📊 Model Evaluation & Metrics",
+    "📊 Real Model Evaluation & Metrics",
 ])
 
 # -------------------------------------------------------------------------------------------------
@@ -98,7 +93,7 @@ with tab1:
         )
         input_value = user_url
 
-    if st.button("🚀 Analyze Sentiment", type="primary", use_container_width=True):
+    if st.button("🚀 Analyze Sentiment", type="primary", width="stretch"):
         if not input_value.strip():
             st.warning("Please enter some text or a valid tweet URL.")
         else:
@@ -165,7 +160,7 @@ with tab1:
                         )
                         .properties(height=140)
                     )
-                    st.altair_chart(chart, use_container_width=True)
+                    st.altair_chart(chart, width="stretch")
 
                 # Feature attribution (IR Term Weights)
                 st.markdown("#### 🔍 Influential Terms")
@@ -183,86 +178,31 @@ with tab1:
                     st.write("No distinct vocabulary weights detected (common or neutral terms).")
 
 # -------------------------------------------------------------------------------------------------
-# TAB 2: IR Tweet Search & Filtering
+# TAB 2: Real Model Evaluation & Performance Metrics
 # -------------------------------------------------------------------------------------------------
 with tab2:
-    st.subheader("Ranked Tweet Retrieval with Sentiment Filtering")
-    st.write(
-        "Search indexed tweets using the **Vector Space Model (Cosine Similarity)** and optionally filter by sentiment class."
-    )
-
-    col_q, col_filt, col_top = st.columns([3, 1, 1])
-    with col_q:
-        search_query = st.text_input(
-            "Search Query:",
-            value="delayed flight",
-            placeholder="e.g. battery drain, excellent movie, flight cancel",
-        )
-    with col_filt:
-        sentiment_choice = st.selectbox(
-            "Filter Sentiment:",
-            ["all", "positive", "negative", "neutral"],
-            format_func=lambda x: x.capitalize(),
-        )
-    with col_top:
-        top_k = st.slider("Results count:", min_value=5, max_value=30, value=10)
-
-    if st.button("🔎 Search Tweets", type="primary"):
-        if not search_query.strip():
-            st.warning("Please enter a search query.")
-        else:
-            t_start = time.time()
-            results = search_engine.search(
-                search_query, sentiment_filter=sentiment_choice, top_k=top_k
-            )
-            elapsed = (time.time() - t_start) * 1000
-
-            st.write(f"⏱️ Found **{len(results)}** ranked documents in **{elapsed:.2f} ms**")
-
-            if not results:
-                st.info("No matching tweets found for the query and filter combination.")
-            else:
-                for idx, r in enumerate(results, start=1):
-                    sent = r["sentiment"]
-                    badge_color = (
-                        "🟢" if sent == "positive" else ("🔴" if sent == "negative" else "⚪")
-                    )
-
-                    with st.container():
-                        st.markdown(
-                            f"**#{idx}** {badge_color} **{sent.upper()}** "
-                            f"| **IR Relevance Score:** `{r['relevance_score']:.4f}` "
-                            f"| **Matched Terms:** `{', '.join(r['matched_terms']) if r['matched_terms'] else 'N/A'}`"
-                        )
-                        st.markdown(f"> *{r['text']}*")
-                        st.divider()
-
-# -------------------------------------------------------------------------------------------------
-# TAB 3: Model Evaluation & Metrics
-# -------------------------------------------------------------------------------------------------
-with tab3:
     st.subheader("Model Effectiveness & Performance Metrics")
     st.write(
-        "Standard classification and information retrieval evaluation metrics on the held-out test split (2,400 tweets)."
+        "All values below are **real calculations** computed by scikit-learn on the stratified test split (**2,400 tweets**, 20% of 12,000 benchmark dataset)."
     )
 
-    # Top metrics row
-    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-    with m_col1:
-        st.metric("Test Accuracy", f"{metrics['accuracy'] * 100:.2f}%")
-    with m_col2:
+    # Top metrics row (100% computed from test set)
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.metric("Test Accuracy", f"{metrics['accuracy'] * 100:.2f}%", help="Exact: 1,464 / 2,400 correct")
+    with m2:
         macro_f1 = metrics["report"]["macro avg"]["f1-score"] * 100
         st.metric("Macro F1-Score", f"{macro_f1:.2f}%")
-    with m_col3:
-        st.metric("Vocabulary Size", f"{metrics['vocab_size']:,}")
-    with m_col4:
-        st.metric("Test Samples", f"{metrics['test_samples']:,}")
+    with m3:
+        st.metric("ROC-AUC (OVR)", f"{metrics['roc_auc']:.4f}")
+    with m4:
+        st.metric("Log Loss", f"{metrics['log_loss']:.4f}")
 
     st.divider()
 
     col_rep, col_cm = st.columns([3, 2])
     with col_rep:
-        st.markdown("#### 📋 Detailed Classification Report")
+        st.markdown("#### 📋 Classification Report (Test Set)")
         rep = metrics["report"]
         report_data = []
         for cls_name in ["negative", "neutral", "positive"]:
@@ -272,27 +212,54 @@ with tab3:
                 "Precision": f"{row['precision']:.3f}",
                 "Recall": f"{row['recall']:.3f}",
                 "F1-Score": f"{row['f1-score']:.3f}",
-                "Support": int(row["support"]),
+                "Support (Samples)": int(row["support"]),
             })
-        st.dataframe(pd.DataFrame(report_data), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(report_data), hide_index=True, width="stretch")
 
     with col_cm:
-        st.markdown("#### 🔲 Confusion Matrix")
+        st.markdown("#### 🔲 Confusion Matrix (Counts)")
         cm = metrics["confusion_matrix"]
         cm_df = pd.DataFrame(
             cm,
-            index=["Actual Neg", "Actual Neu", "Actual Pos"],
-            columns=["Pred Neg", "Pred Neu", "Pred Pos"],
+            index=["Actual Negative", "Actual Neutral", "Actual Positive"],
+            columns=["Predicted Negative", "Predicted Neutral", "Predicted Positive"],
         )
-        st.dataframe(cm_df, use_container_width=True)
+        st.dataframe(cm_df, width="stretch")
 
     st.markdown("---")
-    st.markdown("#### 📘 Architecture Summary")
+    st.markdown("#### 🔬 Real Test Sample Predictions Inspector")
+    st.caption("Inspect actual test tweets from the held-out split to verify real predictions vs ground truth labels:")
+
+    filter_choice = st.radio(
+        "Filter Test Samples:",
+        ["All (100 samples)", "Only Correctly Classified", "Only Misclassified"],
+        horizontal=True,
+    )
+
+    samples = metrics.get("sample_test_predictions", [])
+    if samples:
+        sample_df = pd.DataFrame(samples)
+        if filter_choice == "Only Correctly Classified":
+            sample_df = sample_df[sample_df["is_correct"] == True]
+        elif filter_choice == "Only Misclassified":
+            sample_df = sample_df[sample_df["is_correct"] == False]
+
+        display_df = sample_df.rename(columns={
+            "text": "Tweet Text",
+            "actual": "Actual Label",
+            "predicted": "Predicted Label",
+            "confidence": "Confidence",
+            "is_correct": "Correct?",
+        })
+        st.dataframe(display_df, hide_index=True, width="stretch")
+
+    st.markdown("---")
+    st.markdown("#### 📘 Architecture & Syllabus Mapping")
     st.markdown(
         """
-        - **Representation:** Scikit-learn `TfidfVectorizer` using sublinear term-frequency scaling and L2 normalization (Unit I: Vector Space Model).
-        - **Classification:** Scikit-learn `LogisticRegression` with multi-class cross-entropy and calibrated posterior probabilities (Unit IV: Categorization & Filtering).
-        - **Retrieval Engine:** Cosine similarity over the document-term matrix with query term projection and faceted sentiment filtering (Unit II: Ranked Retrieval).
-        - **Live Extraction:** Twitter/X oEmbed integration and HTML parsing via `BeautifulSoup` (Unit VI: Data ingestion & web crawling).
+        - **Unit I (Basic IR Models):** Scikit-learn `TfidfVectorizer` applying sublinear TF scaling (1 + log(tf)) and L2 document length normalization.
+        - **Unit IV (Categorization & Filtering):** `LogisticRegression` multi-class probabilistic model with cross-entropy loss minimization.
+        - **Unit V (Measuring Effectiveness):** True test evaluation via Accuracy, Precision, Recall, F1, ROC-AUC, Log Loss, and Confusion Matrix.
+        - **Unit VI (Web Data Ingestion):** Twitter/X oEmbed integration and `BeautifulSoup` parsing to fetch live public tweets from URLs.
         """
     )

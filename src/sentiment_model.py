@@ -4,7 +4,13 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    accuracy_score,
+    roc_auc_score,
+    log_loss,
+)
 from sklearn.model_selection import train_test_split
 
 MODEL_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models")
@@ -35,12 +41,12 @@ class SentimentEngine:
         df = pd.read_csv(data_path)
         df = df.dropna(subset=["text", "sentiment"])
 
-        # 80/20 train-test split for evaluation
+        # 80/20 stratified train-test split
         X_train, X_test, y_train, y_test = train_test_split(
             df["text"], df["sentiment"], test_size=0.2, random_state=42, stratify=df["sentiment"]
         )
 
-        # Standard TF-IDF Vector Space representation with stop-words and unigrams+bigrams
+        # Standard TF-IDF representation
         self.vectorizer = TfidfVectorizer(
             max_features=8000,
             ngram_range=(1, 2),
@@ -50,26 +56,50 @@ class SentimentEngine:
         X_train_vec = self.vectorizer.fit_transform(X_train)
         X_test_vec = self.vectorizer.transform(X_test)
 
-        # Logistic Regression with probabilistic calibration
+        # Logistic Regression
         self.model = LogisticRegression(max_iter=600, C=1.5, random_state=42)
         self.model.fit(X_train_vec, y_train)
         self.classes_ = list(self.model.classes_)
 
-        # Evaluation metrics
+        # Real test set evaluation
         y_pred = self.model.predict(X_test_vec)
+        y_prob = self.model.predict_proba(X_test_vec)
+
         acc = accuracy_score(y_test, y_pred)
         report = classification_report(y_test, y_pred, output_dict=True)
         conf_matrix = confusion_matrix(y_test, y_pred, labels=self.classes_)
+        roc_auc = roc_auc_score(y_test, y_prob, multi_class="ovr")
+        loss = log_loss(y_test, y_prob)
+
+        # Build real test prediction sample table for transparency
+        sample_indices = np.random.RandomState(42).choice(len(y_test), size=min(100, len(y_test)), replace=False)
+        test_samples = []
+        x_test_list = list(X_test)
+        y_test_list = list(y_test)
+        for idx in sample_indices:
+            pred_class = y_pred[idx]
+            actual_class = y_test_list[idx]
+            max_prob = float(np.max(y_prob[idx]))
+            test_samples.append({
+                "text": x_test_list[idx],
+                "actual": actual_class,
+                "predicted": pred_class,
+                "confidence": round(max_prob, 3),
+                "is_correct": bool(pred_class == actual_class),
+            })
 
         self.metrics = {
-            "accuracy": acc,
+            "accuracy": float(acc),
+            "roc_auc": float(roc_auc),
+            "log_loss": float(loss),
             "report": report,
             "confusion_matrix": conf_matrix.tolist(),
             "classes": self.classes_,
-            "total_samples": len(df),
-            "train_samples": len(X_train),
-            "test_samples": len(X_test),
-            "vocab_size": len(self.vectorizer.vocabulary_),
+            "total_samples": int(len(df)),
+            "train_samples": int(len(X_train)),
+            "test_samples": int(len(X_test)),
+            "vocab_size": int(len(self.vectorizer.vocabulary_)),
+            "sample_test_predictions": test_samples,
         }
 
         # Cache trained artifacts
@@ -113,10 +143,9 @@ class SentimentEngine:
 
 
 if __name__ == "__main__":
-    import os
     data_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tweets.csv")
     engine = SentimentEngine()
-    metrics = engine.train(data_file)
+    metrics = engine.train(data_file, force_retrain=True)
     print("Training Complete. Accuracy:", f"{metrics['accuracy']:.4f}")
-    sample = "Terrible delay and horrible flight experience!"
-    print("Sample Prediction:", engine.predict(sample))
+    print("ROC-AUC:", f"{metrics['roc_auc']:.4f}")
+    print("Log Loss:", f"{metrics['log_loss']:.4f}")
