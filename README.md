@@ -14,8 +14,9 @@ This system provides **real-time Sentiment Analysis for Tweets** (supporting dir
    - Feature attribution: extracts influential vocabulary terms and their model coefficient weights driving the prediction.
 
 2. **Live URL Extraction (No API Keys Needed):**
-   - Supports direct text input or public Twitter / X URLs (e.g., `https://x.com/jack/status/20`).
+   - Supports direct text input or public Twitter / X URLs (e.g., `https://x.com/realDonaldTrump/status/794155725152980992`).
    - Fetches live tweet text using Twitter's official oEmbed service and parses HTML via BeautifulSoup.
+   - Includes 6 built-in copyable preset test URLs covering Negative, Positive, and Neutral sentiments.
 
 3. **Dedicated Offline Training (`train.py`):**
    - Clean, modular training script: trains vectorizer and model once, then stores them to disk using `joblib`.

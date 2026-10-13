@@ -62,14 +62,35 @@ with tab1:
             value="Loving the incredible camera quality and smooth software update!",
             height=110,
         )
+        analyze_clicked = st.button("Analyze Sentiment", key="btn_text", type="primary", width="stretch")
     else:
-        user_input = st.text_input(
-            "Paste Twitter / X URL:",
-            value="https://x.com/jack/status/20",
-            placeholder="https://x.com/username/status/123456789",
-        )
+        col_input, col_samples = st.columns([1, 1], gap="large")
 
-    if st.button("Analyze Sentiment", type="primary", width="stretch"):
+        with col_input:
+            user_input = st.text_input(
+                "Paste Twitter / X URL:",
+                value="https://x.com/realDonaldTrump/status/794155725152980992",
+                placeholder="https://x.com/username/status/123456789",
+            )
+            analyze_clicked = st.button("Analyze Sentiment", key="btn_url", type="primary", width="stretch")
+
+        with col_samples:
+            st.markdown("**Sample URLs for Testing:**")
+            st.caption("Click the copy icon on any URL to copy and paste it into the analyzer.")
+
+            st.markdown("- **Negative Sentiment:**")
+            st.code("https://x.com/realDonaldTrump/status/794155725152980992", language="text")
+            st.code("https://x.com/realDonaldTrump/status/802671162383802368", language="text")
+
+            st.markdown("- **Positive Sentiment:**")
+            st.code("https://x.com/TheEllenShow/status/440322224407314432", language="text")
+            st.code("https://x.com/realDonaldTrump/status/814919370711461890", language="text")
+
+            st.markdown("- **Neutral Sentiment:**")
+            st.code("https://x.com/realDonaldTrump/status/815270850916208644", language="text")
+            st.code("https://x.com/realDonaldTrump/status/814958820980039681", language="text")
+
+    if analyze_clicked:
         clean_input = user_input.strip()
         if not clean_input:
             st.warning("Please provide input text or a valid URL.")
