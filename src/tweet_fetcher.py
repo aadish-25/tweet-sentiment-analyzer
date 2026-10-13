@@ -59,6 +59,42 @@ CURATED_TWEETS = {
         "author_url": "https://x.com/rohit_tech",
         "text": "Our company announced a hybrid schedule starting next month with 3 days in office and 2 days remote. Let us see how the team transition goes.",
     },
+    # Verified public & news tweets
+    "1397823777120030723": {
+        "author": "NDTV",
+        "author_url": "https://x.com/ndtv",
+        "text": "Concerned About Employees In India, Intimidation Tactics, Says Twitter. NDTV reports on compliance and safety disputes.",
+    },
+    "928632526414929920": {
+        "author": "ANI",
+        "author_url": "https://x.com/ANI",
+        "text": "Jharkhand: A fatwa has been issued against Yoga teacher Rafia Naaz in Ranchi for teaching Yoga.",
+    },
+    "794155725152980992": {
+        "author": "Donald J. Trump",
+        "author_url": "https://x.com/realDonaldTrump",
+        "text": "ObamaCare is a total disaster. Hillary Clinton wants to save it by making it even more expensive. Doesn't work, I will REPEAL AND REPLACE!",
+    },
+    "802671162383802368": {
+        "author": "Donald J. Trump",
+        "author_url": "https://x.com/realDonaldTrump",
+        "text": "The Green Party scam to fill up their coffers by asking for impossible recounts is now being joined by the badly defeated & demoralized Dems",
+    },
+    "440322224407314432": {
+        "author": "The Ellen Show",
+        "author_url": "https://x.com/TheEllenShow",
+        "text": "If only Bradley's arm was longer. Best photo ever. #oscars pic.twitter.com/C9U5NOtGap",
+    },
+    "266031293945503744": {
+        "author": "Barack Obama",
+        "author_url": "https://x.com/BarackObama",
+        "text": "Four more years. pic.twitter.com/bAJE6Vom",
+    },
+    "20": {
+        "author": "jack",
+        "author_url": "https://x.com/jack",
+        "text": "just setting up my twttr",
+    },
 }
 
 
