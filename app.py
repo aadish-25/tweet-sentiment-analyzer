@@ -50,6 +50,21 @@ with st.sidebar:
     st.metric("Test Accuracy", f"{metrics['accuracy'] * 100:.2f}%")
     st.metric("ROC-AUC Score", f"{metrics['roc_auc']:.4f}")
 
+    st.divider()
+    with st.expander("📁 Train with Custom CSV"):
+        st.caption("Upload a custom CSV to retrain and re-evaluate the model:")
+        uploaded_file = st.file_uploader("Upload CSV", type=["csv"], label_visibility="collapsed")
+        if uploaded_file is not None:
+            if st.button("⚡ Retrain on Custom CSV", type="primary", width="stretch"):
+                with st.spinner("Training on custom dataset..."):
+                    custom_df = pd.read_csv(uploaded_file)
+                    try:
+                        metrics = sentiment_engine.train(custom_df, force_retrain=True)
+                        st.success(f"Trained on {metrics['total_samples']:,} samples!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Training failed: {e}")
+
 # Main Header
 st.title("🐦 Tweet Sentiment Analysis System")
 st.caption(
