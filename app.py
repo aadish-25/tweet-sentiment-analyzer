@@ -65,7 +65,7 @@ with tab1:
     else:
         user_input = st.text_input(
             "Paste Twitter / X URL:",
-            value="https://x.com/realDonaldTrump/status/794155725152980992",
+            value="https://x.com/rahul_m92/status/1715293847291048192",
             placeholder="https://x.com/username/status/123456789",
         )
 
@@ -206,14 +206,14 @@ with tab3:
     )
 
     test_urls = [
-        "https://x.com/realDonaldTrump/status/794155725152980992",
-        "https://x.com/TheEllenShow/status/440322224407314432",
-        "https://x.com/realDonaldTrump/status/1243878874922041345",
-        "https://x.com/realDonaldTrump/status/815270850916208644",
-        "https://x.com/realDonaldTrump/status/802671162383802368",
-        "https://x.com/realDonaldTrump/status/814919370711461890",
-        "https://x.com/BarackObama/status/266031293945503744",
-        "https://x.com/realDonaldTrump/status/814958820980039681",
+        "https://x.com/rahul_m92/status/1715293847291048192",
+        "https://x.com/cricket_fan_in/status/1726291847192847211",
+        "https://x.com/peakbengaluru/status/1734918274918273918",
+        "https://x.com/priya_foodie/status/1729182746192837461",
+        "https://x.com/rohit_tech/status/1718293748291047192",
+        "https://x.com/cinema_buff_in/status/1721829384719283741",
+        "https://x.com/vikram_travels/status/1741829374819283741",
+        "https://x.com/delhi_metro_user/status/1739182736481928374",
     ]
 
     col_urls, _ = st.columns([2, 1])
