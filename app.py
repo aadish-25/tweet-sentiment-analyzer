@@ -202,38 +202,22 @@ with tab2:
 with tab3:
     st.subheader("Test Tweet URLs")
     st.write(
-        "Copy and paste any of these verified live Twitter / X URLs into the Sentiment Analysis tab to test the system:"
+        "Copy and paste any of these verified live Twitter / X status URLs into the Sentiment Analysis tab to test the system:"
     )
 
-    col_neg, col_pos, col_neu = st.columns(3, gap="medium")
+    test_urls = [
+        "https://x.com/realDonaldTrump/status/794155725152980992",
+        "https://x.com/TheEllenShow/status/440322224407314432",
+        "https://x.com/realDonaldTrump/status/1243878874922041345",
+        "https://x.com/realDonaldTrump/status/815270850916208644",
+        "https://x.com/realDonaldTrump/status/802671162383802368",
+        "https://x.com/realDonaldTrump/status/814919370711461890",
+        "https://x.com/BarackObama/status/266031293945503744",
+        "https://x.com/realDonaldTrump/status/814958820980039681",
+    ]
 
-    with col_neg:
-        st.markdown("### Negative Sentiment")
-        st.markdown("**Sample 1: Healthcare Policy Critique**")
-        st.caption("Author: Donald J. Trump | Expected: Negative (74.8%)")
-        st.code("https://x.com/realDonaldTrump/status/794155725152980992", language="text")
-
-        st.markdown("**Sample 2: Recount Controversy**")
-        st.caption("Author: Donald J. Trump | Expected: Negative (89.2%)")
-        st.code("https://x.com/realDonaldTrump/status/802671162383802368", language="text")
-
-    with col_pos:
-        st.markdown("### Positive Sentiment")
-        st.markdown("**Sample 1: Viral Oscars Group Photo**")
-        st.caption("Author: The Ellen Show | Expected: Positive (82.7%)")
-        st.code("https://x.com/TheEllenShow/status/440322224407314432", language="text")
-
-        st.markdown("**Sample 2: Praise for Strategic Move**")
-        st.caption("Author: Donald J. Trump | Expected: Positive (81.0%)")
-        st.code("https://x.com/realDonaldTrump/status/814919370711461890", language="text")
-
-    with col_neu:
-        st.markdown("### Neutral Sentiment")
-        st.markdown("**Sample 1: Birthday Greeting**")
-        st.caption("Author: Donald J. Trump | Expected: Neutral (74.2%)")
-        st.code("https://x.com/realDonaldTrump/status/815270850916208644", language="text")
-
-        st.markdown("**Sample 2: Media Coverage Commentary**")
-        st.caption("Author: Donald J. Trump | Expected: Neutral (62.3%)")
-        st.code("https://x.com/realDonaldTrump/status/814958820980039681", language="text")
+    col_urls, _ = st.columns([2, 1])
+    with col_urls:
+        for url in test_urls:
+            st.code(url, language="text")
 
