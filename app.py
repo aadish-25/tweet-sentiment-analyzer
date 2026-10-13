@@ -21,20 +21,13 @@ st.markdown(
     <style>
     [data-testid="collapsedControl"] { display: none; }
     section[data-testid="stSidebar"] { display: none; }
-    .metric-card {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 16px;
-        text-align: center;
-    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 
-@st.cache_resource(show_spinner="Loading models...")
+@st.cache_resource(show_spinner="Loading model...")
 def get_engine():
     return SentimentEngine()
 
@@ -45,13 +38,13 @@ metrics = engine.metrics
 # Header
 st.title("Tweet Sentiment Analysis System")
 st.caption(
-    "Information Retrieval Project: Dual-Model Sentiment Classification using Logistic Regression and Multinomial Naive Bayes."
+    "Information Retrieval Project: Sentiment Classification using Logistic Regression."
 )
 
 tab1, tab2 = st.tabs(["Sentiment Analysis", "Evaluation Metrics"])
 
 # -------------------------------------------------------------------------------------------------
-# TAB 1: Sentiment Analysis (Dual Model Comparison with Visual Probability Bars)
+# TAB 1: Sentiment Analysis
 # -------------------------------------------------------------------------------------------------
 with tab1:
     st.subheader("Analyze Tweet Sentiment")
@@ -95,20 +88,40 @@ with tab1:
                         f"Fetched Tweet from {resolved.get('author', 'User')}: \"{tweet_text}\""
                     )
 
-                results = engine.predict(tweet_text)
-                lr_res = results["logistic_regression"]
-                nb_res = results["naive_bayes"]
+                result = engine.predict(tweet_text)
+                pred_label = result["prediction"]
+                confidence = result["confidence"]
+                probabilities = result["probabilities"]
+                top_terms = result["top_terms"]
 
-                st.markdown("### Model Predictions Comparison")
-                col_lr, col_nb = st.columns(2)
+                st.divider()
 
-                def create_probability_chart(prob_dict):
-                    df_prob = pd.DataFrame({
-                        "Sentiment": [k.capitalize() for k in prob_dict.keys()],
-                        "Probability": [v * 100 for v in prob_dict.values()],
+                # Big Colored Sentiment Box + Horizontal Probability Bar Chart
+                col_box, col_chart = st.columns([1, 2])
+
+                with col_box:
+                    if pred_label == "positive":
+                        st.success(
+                            f"### POSITIVE\n**Confidence:** {confidence * 100:.1f}%"
+                        )
+                    elif pred_label == "negative":
+                        st.error(
+                            f"### NEGATIVE\n**Confidence:** {confidence * 100:.1f}%"
+                        )
+                    else:
+                        st.info(
+                            f"### NEUTRAL\n**Confidence:** {confidence * 100:.1f}%"
+                        )
+
+                with col_chart:
+                    st.markdown("**Class Probabilities Breakdown:**")
+                    prob_df = pd.DataFrame({
+                        "Sentiment": [k.capitalize() for k in probabilities.keys()],
+                        "Probability": [v * 100 for v in probabilities.values()],
                     })
-                    return (
-                        alt.Chart(df_prob)
+
+                    chart = (
+                        alt.Chart(prob_df)
                         .mark_bar(cornerRadius=4)
                         .encode(
                             x=alt.X("Probability:Q", scale=alt.Scale(domain=[0, 100]), title="Probability (%)"),
@@ -125,142 +138,56 @@ with tab1:
                         )
                         .properties(height=140)
                     )
+                    st.altair_chart(chart, width="stretch")
 
-                # Column 1: Logistic Regression
-                with col_lr:
-                    st.markdown("#### Logistic Regression")
-                    st.markdown(
-                        f"**Prediction:** `{lr_res['prediction'].upper()}` | **Confidence:** `{lr_res['confidence'] * 100:.2f}%`"
-                    )
-                    st.altair_chart(create_probability_chart(lr_res["probabilities"]), width="stretch")
-                    st.caption(
-                        f"Negative: {lr_res['probabilities']['negative']*100:.1f}% | "
-                        f"Neutral: {lr_res['probabilities']['neutral']*100:.1f}% | "
-                        f"Positive: {lr_res['probabilities']['positive']*100:.1f}%"
-                    )
-
-                # Column 2: Multinomial Naive Bayes
-                with col_nb:
-                    st.markdown("#### Multinomial Naive Bayes")
-                    st.markdown(
-                        f"**Prediction:** `{nb_res['prediction'].upper()}` | **Confidence:** `{nb_res['confidence'] * 100:.2f}%`"
-                    )
-                    st.altair_chart(create_probability_chart(nb_res["probabilities"]), width="stretch")
-                    st.caption(
-                        f"Negative: {nb_res['probabilities']['negative']*100:.1f}% | "
-                        f"Neutral: {nb_res['probabilities']['neutral']*100:.1f}% | "
-                        f"Positive: {nb_res['probabilities']['positive']*100:.1f}%"
-                    )
+                # Influential Vocabulary Terms
+                st.markdown("#### Influential Terms")
+                st.caption("Vocabulary terms in the tweet driving the classification:")
+                if top_terms:
+                    term_cols = st.columns(min(len(top_terms), 5))
+                    for i, (term, weight) in enumerate(top_terms[:5]):
+                        with term_cols[i]:
+                            st.metric(
+                                label=f"Term {i+1}",
+                                value=term,
+                                delta=f"{weight:+.2f}",
+                            )
+                else:
+                    st.write("No distinct vocabulary weights detected.")
 
 # -------------------------------------------------------------------------------------------------
-# TAB 2: Evaluation Metrics (Grand Comparative Dashboard)
+# TAB 2: Evaluation Metrics (Single Line Metrics Row)
 # -------------------------------------------------------------------------------------------------
 with tab2:
-    st.subheader("Model Evaluation and Comparative Metrics")
+    st.subheader("Model Evaluation and Metrics")
 
     if metrics is not None:
-        d_info = metrics.get("dataset_info", {})
-        lr_m = metrics.get("logistic_regression", {})
-        nb_m = metrics.get("naive_bayes", {})
-
-        # Top summary cards row
-        col_s1, col_s2, col_s3, col_s4 = st.columns(4)
-        with col_s1:
-            st.metric("Total Dataset Corpus", f"{d_info.get('total_samples', 0):,} tweets")
-        with col_s2:
-            st.metric("Training Split (80%)", f"{d_info.get('train_samples', 0):,} tweets")
-        with col_s3:
-            st.metric("Test Split (20%)", f"{d_info.get('test_samples', 0):,} tweets")
-        with col_s4:
-            st.metric("Vocabulary Features", f"{d_info.get('vocabulary_size', 0):,} terms")
-
-        st.markdown("---")
-
-        # Grand Visual Comparison Bar Chart
-        st.markdown("#### Comparative Benchmark: Logistic Regression vs Naive Bayes")
-        st.caption("Visual comparison of classification performance evaluated on the exact same 20% test split.")
-
-        chart_data = pd.DataFrame([
-            {"Metric": "Accuracy", "Model": "Logistic Regression", "Score": lr_m.get("accuracy", 0) * 100},
-            {"Metric": "Accuracy", "Model": "Naive Bayes", "Score": nb_m.get("accuracy", 0) * 100},
-            {"Metric": "Precision", "Model": "Logistic Regression", "Score": lr_m.get("precision", 0) * 100},
-            {"Metric": "Precision", "Model": "Naive Bayes", "Score": nb_m.get("precision", 0) * 100},
-            {"Metric": "Recall", "Model": "Logistic Regression", "Score": lr_m.get("recall", 0) * 100},
-            {"Metric": "Recall", "Model": "Naive Bayes", "Score": nb_m.get("recall", 0) * 100},
-            {"Metric": "F1-Score", "Model": "Logistic Regression", "Score": lr_m.get("f1_score", 0) * 100},
-            {"Metric": "F1-Score", "Model": "Naive Bayes", "Score": nb_m.get("f1_score", 0) * 100},
-        ])
-
-        comparison_chart = (
-            alt.Chart(chart_data)
-            .mark_bar(cornerRadius=4)
-            .encode(
-                x=alt.X("Model:N", title=None, axis=alt.Axis(labels=True)),
-                y=alt.Y("Score:Q", title="Percentage (%)", scale=alt.Scale(domain=[0, 100])),
-                color=alt.Color(
-                    "Model:N",
-                    scale=alt.Scale(
-                        domain=["Logistic Regression", "Naive Bayes"],
-                        range=["#1d3557", "#457b9d"],
-                    ),
-                    legend=alt.Legend(title="Algorithm", orient="top"),
-                ),
-                column=alt.Column("Metric:N", title=None, header=alt.Header(labelFontSize=13, labelFontWeight="bold")),
-                tooltip=["Metric", "Model", alt.Tooltip("Score:Q", format=".2f")],
-            )
-            .properties(width=160, height=280)
-        )
-        st.altair_chart(comparison_chart)
-
-        st.markdown("---")
-
-        # Metric Details Table
-        st.markdown("#### Performance Metrics Summary Table")
-        comparison_table = [
-            {
-                "Evaluation Metric": "Accuracy",
-                "Logistic Regression": f"{lr_m.get('accuracy', 0) * 100:.2f}%",
-                "Multinomial Naive Bayes": f"{nb_m.get('accuracy', 0) * 100:.2f}%",
-                "Leading Model": "Logistic Regression" if lr_m.get("accuracy", 0) >= nb_m.get("accuracy", 0) else "Naive Bayes",
-            },
-            {
-                "Evaluation Metric": "Precision (Macro)",
-                "Logistic Regression": f"{lr_m.get('precision', 0) * 100:.2f}%",
-                "Multinomial Naive Bayes": f"{nb_m.get('precision', 0) * 100:.2f}%",
-                "Leading Model": "Logistic Regression" if lr_m.get("precision", 0) >= nb_m.get("precision", 0) else "Naive Bayes",
-            },
-            {
-                "Evaluation Metric": "Recall (Macro)",
-                "Logistic Regression": f"{lr_m.get('recall', 0) * 100:.2f}%",
-                "Multinomial Naive Bayes": f"{nb_m.get('recall', 0) * 100:.2f}%",
-                "Leading Model": "Logistic Regression" if lr_m.get("recall", 0) >= nb_m.get("recall", 0) else "Naive Bayes",
-            },
-            {
-                "Evaluation Metric": "F1-Score (Macro)",
-                "Logistic Regression": f"{lr_m.get('f1_score', 0) * 100:.2f}%",
-                "Multinomial Naive Bayes": f"{nb_m.get('f1_score', 0) * 100:.2f}%",
-                "Leading Model": "Logistic Regression" if lr_m.get("f1_score", 0) >= nb_m.get("f1_score", 0) else "Naive Bayes",
-            },
-            {
-                "Evaluation Metric": "Log Loss (Cross-Entropy)",
-                "Logistic Regression": f"{lr_m.get('log_loss', 0):.4f}",
-                "Multinomial Naive Bayes": f"{nb_m.get('log_loss', 0):.4f}",
-                "Leading Model": "Logistic Regression (Lower is better)",
-            },
-        ]
-        st.dataframe(pd.DataFrame(comparison_table), hide_index=True, width="stretch")
+        # Single-line metrics row
+        m1, m2, m3, m4, m5, m6 = st.columns(6)
+        with m1:
+            st.metric("Total Dataset", f"{metrics.get('total_samples', 0):,}")
+        with m2:
+            st.metric("Accuracy", f"{metrics.get('accuracy', 0) * 100:.2f}%")
+        with m3:
+            st.metric("F1-Score", f"{metrics.get('f1_score', 0) * 100:.2f}%")
+        with m4:
+            st.metric("Precision", f"{metrics.get('precision', 0) * 100:.2f}%")
+        with m5:
+            st.metric("Recall", f"{metrics.get('recall', 0) * 100:.2f}%")
+        with m6:
+            st.metric("Log Loss", f"{metrics.get('log_loss', 0):.4f}")
 
     else:
-        st.info("No trained models found. Train models below or run python train.py.")
+        st.info("No trained model found. Train model below or run python train.py.")
 
     st.markdown("---")
     st.markdown("#### Retrain with Custom Dataset")
-    st.caption("Upload any custom CSV dataset to retrain and benchmark both models on your data.")
+    st.caption("Upload a custom CSV file to retrain and re-evaluate the model.")
 
     uploaded_file = st.file_uploader("Upload CSV File:", type=["csv"])
     if uploaded_file is not None:
-        if st.button("Train Models on Uploaded CSV", type="primary", width="stretch"):
-            with st.spinner("Training Logistic Regression and Naive Bayes on uploaded CSV..."):
+        if st.button("Train Model on Uploaded CSV", type="primary", width="stretch"):
+            with st.spinner("Training Logistic Regression on uploaded CSV..."):
                 try:
                     updated_metrics = train_models(data_source=uploaded_file)
                     st.success("Training complete! Model artifacts and metrics updated.")

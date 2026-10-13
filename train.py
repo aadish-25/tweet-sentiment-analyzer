@@ -4,7 +4,6 @@ import joblib
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, log_loss
 from sklearn.model_selection import train_test_split
 
@@ -106,8 +105,8 @@ def prepare_dataset(data_source, text_col: str = None, label_col: str = None) ->
 
 def train_models(data_source=None, text_col: str = None, label_col: str = None) -> dict:
     """
-    Train TF-IDF vectorizer, Logistic Regression, and Naive Bayes models.
-    Evaluates both on the same test split and saves serialized artifacts.
+    Train TF-IDF vectorizer and Logistic Regression classifier.
+    Evaluates on held-out test split and saves serialized artifacts.
     """
     if data_source is None:
         data_source = config.DATA_PATH
@@ -134,50 +133,29 @@ def train_models(data_source=None, text_col: str = None, label_col: str = None) 
     X_train_vec = vectorizer.fit_transform(X_train)
     X_test_vec = vectorizer.transform(X_test)
 
-    # Model 1: Logistic Regression
-    lr_model = LogisticRegression(max_iter=600, C=1.5, random_state=config.RANDOM_STATE)
-    lr_model.fit(X_train_vec, y_train)
+    # Logistic Regression Classifier
+    model = LogisticRegression(max_iter=600, C=1.5, random_state=config.RANDOM_STATE)
+    model.fit(X_train_vec, y_train)
 
-    # Model 2: Multinomial Naive Bayes
-    nb_model = MultinomialNB()
-    nb_model.fit(X_train_vec, y_train)
-
-    # Evaluation on the exact same test split
-    lr_preds = lr_model.predict(X_test_vec)
-    lr_probs = lr_model.predict_proba(X_test_vec)
-
-    nb_preds = nb_model.predict(X_test_vec)
-    nb_probs = nb_model.predict_proba(X_test_vec)
-
-    classes = sorted(list(lr_model.classes_))
+    # Evaluation on the test split
+    preds = model.predict(X_test_vec)
+    probs = model.predict_proba(X_test_vec)
 
     metrics = {
-        "dataset_info": {
-            "total_samples": int(len(df)),
-            "train_samples": int(len(X_train)),
-            "test_samples": int(len(X_test)),
-            "vocabulary_size": int(len(vectorizer.vocabulary_)),
-            "classes": classes,
-        },
-        "logistic_regression": {
-            "accuracy": float(accuracy_score(y_test, lr_preds)),
-            "precision": float(precision_score(y_test, lr_preds, average="macro", zero_division=0)),
-            "recall": float(recall_score(y_test, lr_preds, average="macro", zero_division=0)),
-            "f1_score": float(f1_score(y_test, lr_preds, average="macro", zero_division=0)),
-            "log_loss": float(log_loss(y_test, lr_probs)),
-        },
-        "naive_bayes": {
-            "accuracy": float(accuracy_score(y_test, nb_preds)),
-            "precision": float(precision_score(y_test, nb_preds, average="macro", zero_division=0)),
-            "recall": float(recall_score(y_test, nb_preds, average="macro", zero_division=0)),
-            "f1_score": float(f1_score(y_test, nb_preds, average="macro", zero_division=0)),
-            "log_loss": float(log_loss(y_test, nb_probs)),
-        },
+        "total_samples": int(len(df)),
+        "train_samples": int(len(X_train)),
+        "test_samples": int(len(X_test)),
+        "vocabulary_size": int(len(vectorizer.vocabulary_)),
+        "classes": sorted(list(model.classes_)),
+        "accuracy": float(accuracy_score(y_test, preds)),
+        "precision": float(precision_score(y_test, preds, average="macro", zero_division=0)),
+        "recall": float(recall_score(y_test, preds, average="macro", zero_division=0)),
+        "f1_score": float(f1_score(y_test, preds, average="macro", zero_division=0)),
+        "log_loss": float(log_loss(y_test, probs)),
     }
 
     # Save artifacts to disk using joblib
-    joblib.dump(lr_model, config.LR_MODEL_FILE)
-    joblib.dump(nb_model, config.NB_MODEL_FILE)
+    joblib.dump(model, config.MODEL_FILE)
     joblib.dump(vectorizer, config.VEC_FILE)
     joblib.dump(metrics, config.METRICS_FILE)
 
@@ -185,7 +163,7 @@ def train_models(data_source=None, text_col: str = None, label_col: str = None) 
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train Sentiment Analysis Models (Logistic Regression & Naive Bayes)")
+    parser = argparse.ArgumentParser(description="Train Logistic Regression Tweet Sentiment Analysis Model")
     parser.add_argument("--data", type=str, default=None, help="Path to custom CSV dataset")
     parser.add_argument("--text-col", type=str, default=None, help="Text column name")
     parser.add_argument("--label-col", type=str, default=None, help="Sentiment label column name")
@@ -195,22 +173,14 @@ if __name__ == "__main__":
     print(f"Loading and training on: {data_file}")
     results = train_models(data_source=data_file, text_col=args.text_col, label_col=args.label_col)
 
-    d_info = results["dataset_info"]
-    lr_m = results["logistic_regression"]
-    nb_m = results["naive_bayes"]
-
-    print("\n" + "=" * 65)
-    print("TRAINING COMPLETE - EVALUATION METRICS COMPARISON (TEST SPLIT)")
-    print("=" * 65)
-    print(f"Total Samples: {d_info['total_samples']:,} | Train: {d_info['train_samples']:,} | Test: {d_info['test_samples']:,}")
-    print(f"Vocabulary Features: {d_info['vocabulary_size']:,}")
-    print("-" * 65)
-    print(f"{'Metric':<18} | {'Logistic Regression':<20} | {'Naive Bayes':<15}")
-    print("-" * 65)
-    print(f"{'Accuracy':<18} | {lr_m['accuracy'] * 100:>18.2f}% | {nb_m['accuracy'] * 100:>13.2f}%")
-    print(f"{'Precision (Macro)':<18} | {lr_m['precision'] * 100:>18.2f}% | {nb_m['precision'] * 100:>13.2f}%")
-    print(f"{'Recall (Macro)':<18} | {lr_m['recall'] * 100:>18.2f}% | {nb_m['recall'] * 100:>13.2f}%")
-    print(f"{'F1-Score (Macro)':<18} | {lr_m['f1_score'] * 100:>18.2f}% | {nb_m['f1_score'] * 100:>13.2f}%")
-    print(f"{'Log Loss':<18} | {lr_m['log_loss']:>19.4f} | {nb_m['log_loss']:>14.4f}")
-    print("=" * 65)
-    print(f"Models saved in: {config.MODEL_DIR}/")
+    print("\n" + "=" * 50)
+    print("LOGISTIC REGRESSION TRAINING & EVALUATION COMPLETE")
+    print("=" * 50)
+    print(f"Total Dataset Samples: {results['total_samples']:,}")
+    print(f"Test Accuracy:         {results['accuracy'] * 100:.2f}%")
+    print(f"Precision (Macro):     {results['precision'] * 100:.2f}%")
+    print(f"Recall (Macro):        {results['recall'] * 100:.2f}%")
+    print(f"F1-Score (Macro):      {results['f1_score'] * 100:.2f}%")
+    print(f"Log Loss:              {results['log_loss']:.4f}")
+    print("=" * 50)
+    print(f"Model saved to: {config.MODEL_FILE}")
