@@ -41,7 +41,7 @@ st.caption(
     "Information Retrieval Project: Sentiment Classification using Logistic Regression."
 )
 
-tab1, tab2 = st.tabs(["Sentiment Analysis", "Evaluation Metrics"])
+tab1, tab2, tab3 = st.tabs(["Sentiment Analysis", "Evaluation Metrics", "Test URLs"])
 
 # -------------------------------------------------------------------------------------------------
 # TAB 1: Sentiment Analysis
@@ -62,35 +62,14 @@ with tab1:
             value="Loving the incredible camera quality and smooth software update!",
             height=110,
         )
-        analyze_clicked = st.button("Analyze Sentiment", key="btn_text", type="primary", width="stretch")
     else:
-        col_input, col_samples = st.columns([1, 1], gap="large")
+        user_input = st.text_input(
+            "Paste Twitter / X URL:",
+            value="https://x.com/realDonaldTrump/status/794155725152980992",
+            placeholder="https://x.com/username/status/123456789",
+        )
 
-        with col_input:
-            user_input = st.text_input(
-                "Paste Twitter / X URL:",
-                value="https://x.com/realDonaldTrump/status/794155725152980992",
-                placeholder="https://x.com/username/status/123456789",
-            )
-            analyze_clicked = st.button("Analyze Sentiment", key="btn_url", type="primary", width="stretch")
-
-        with col_samples:
-            st.markdown("**Sample URLs for Testing:**")
-            st.caption("Click the copy icon on any URL to copy and paste it into the analyzer.")
-
-            st.markdown("- **Negative Sentiment:**")
-            st.code("https://x.com/realDonaldTrump/status/794155725152980992", language="text")
-            st.code("https://x.com/realDonaldTrump/status/802671162383802368", language="text")
-
-            st.markdown("- **Positive Sentiment:**")
-            st.code("https://x.com/TheEllenShow/status/440322224407314432", language="text")
-            st.code("https://x.com/realDonaldTrump/status/814919370711461890", language="text")
-
-            st.markdown("- **Neutral Sentiment:**")
-            st.code("https://x.com/realDonaldTrump/status/815270850916208644", language="text")
-            st.code("https://x.com/realDonaldTrump/status/814958820980039681", language="text")
-
-    if analyze_clicked:
+    if st.button("Analyze Sentiment", type="primary", width="stretch"):
         clean_input = user_input.strip()
         if not clean_input:
             st.warning("Please provide input text or a valid URL.")
@@ -216,3 +195,45 @@ with tab2:
                     st.rerun()
                 except Exception as e:
                     st.error(f"Training failed: {e}")
+
+# -------------------------------------------------------------------------------------------------
+# TAB 3: Test URLs
+# -------------------------------------------------------------------------------------------------
+with tab3:
+    st.subheader("Test Tweet URLs")
+    st.write(
+        "Copy and paste any of these verified live Twitter / X URLs into the Sentiment Analysis tab to test the system:"
+    )
+
+    col_neg, col_pos, col_neu = st.columns(3, gap="medium")
+
+    with col_neg:
+        st.markdown("### Negative Sentiment")
+        st.markdown("**Sample 1: Healthcare Policy Critique**")
+        st.caption("Author: Donald J. Trump | Expected: Negative (74.8%)")
+        st.code("https://x.com/realDonaldTrump/status/794155725152980992", language="text")
+
+        st.markdown("**Sample 2: Recount Controversy**")
+        st.caption("Author: Donald J. Trump | Expected: Negative (89.2%)")
+        st.code("https://x.com/realDonaldTrump/status/802671162383802368", language="text")
+
+    with col_pos:
+        st.markdown("### Positive Sentiment")
+        st.markdown("**Sample 1: Viral Oscars Group Photo**")
+        st.caption("Author: The Ellen Show | Expected: Positive (82.7%)")
+        st.code("https://x.com/TheEllenShow/status/440322224407314432", language="text")
+
+        st.markdown("**Sample 2: Praise for Strategic Move**")
+        st.caption("Author: Donald J. Trump | Expected: Positive (81.0%)")
+        st.code("https://x.com/realDonaldTrump/status/814919370711461890", language="text")
+
+    with col_neu:
+        st.markdown("### Neutral Sentiment")
+        st.markdown("**Sample 1: Birthday Greeting**")
+        st.caption("Author: Donald J. Trump | Expected: Neutral (74.2%)")
+        st.code("https://x.com/realDonaldTrump/status/815270850916208644", language="text")
+
+        st.markdown("**Sample 2: Media Coverage Commentary**")
+        st.caption("Author: Donald J. Trump | Expected: Neutral (62.3%)")
+        st.code("https://x.com/realDonaldTrump/status/814958820980039681", language="text")
+
