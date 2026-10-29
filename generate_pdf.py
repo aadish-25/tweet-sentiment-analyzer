@@ -18,6 +18,14 @@ def build_pdf():
 <style>
 @page cover_template {
     size: letter portrait;
+    margin: 10mm;
+    @frame content_frame {
+        left: 10mm; width: 196mm; top: 10mm; height: 260mm;
+    }
+}
+
+@page index_template {
+    size: letter portrait;
     margin: 15mm;
     @frame content_frame {
         left: 18mm; width: 180mm; top: 12mm; height: 255mm;
@@ -167,101 +175,121 @@ table.data-table tr.even {
     font-size: 8.5pt;
 }
 
-.cover-wrapper {
+.cover-page-border {
+    border: 2pt solid #000000;
+    padding: 14px 18px 12px 18px;
+    height: 250mm;
     text-align: center;
-    height: 100%;
 }
 
 .cover-univ {
-    font-size: 15pt;
+    font-size: 14.5pt;
     font-weight: bold;
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-top: 2px;
 }
 
 .cover-college {
-    font-size: 12.5pt;
+    font-size: 13.5pt;
     font-weight: bold;
-    margin-top: 5px;
+    line-height: 1.25;
+    margin-top: 4px;
 }
 
 .cover-addr {
     font-size: 9.5pt;
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
 .cover-naac {
-    font-size: 10pt;
+    font-size: 9.5pt;
     font-weight: bold;
-    margin-top: 2px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
+    margin-top: 3px;
 }
 
 .cover-dept {
-    font-size: 11.5pt;
-    font-weight: bold;
-    margin-top: 3px;
-    letter-spacing: 0.5px;
-}
-
-.cover-logo {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.cover-rep-title {
-    font-size: 13pt;
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-top: 4px;
-}
-
-.cover-on {
     font-size: 10.5pt;
     font-weight: bold;
+    letter-spacing: 0.5px;
     margin-top: 3px;
 }
 
-.cover-project-title {
-    font-size: 13.5pt;
-    font-weight: bold;
-    font-style: italic;
-    color: #1a2a3a;
-    margin-top: 5px;
-    line-height: 1.25;
+.cover-logo-div {
+    margin-top: 10px;
+    margin-bottom: 8px;
 }
 
-.cover-acad {
-    font-size: 10pt;
+.cover-report-label {
+    font-size: 11.5pt;
     font-weight: bold;
-    margin-top: 8px;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+}
+
+.cover-proj-title {
+    font-size: 12pt;
+    font-weight: bold;
+    line-height: 1.35;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .cover-deg {
-    font-size: 10.5pt;
+    font-size: 11pt;
     font-weight: bold;
-    margin-top: 2px;
+    margin-top: 12px;
 }
 
 .cover-sub-by {
-    font-size: 10pt;
+    font-size: 10.5pt;
     font-weight: bold;
-    font-style: italic;
-    margin-top: 10px;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
 }
 
-.cover-members-table {
-    width: 85%;
-    margin: 6px auto 0 auto;
-    font-size: 9.5pt;
+.cover-stud-table {
+    width: 60%;
+    margin: 8px auto 0 auto;
+    font-size: 10pt;
+    border-collapse: collapse;
+}
+
+.cover-stud-table th {
+    font-weight: bold;
+    padding: 2px 8px;
+    border: none;
     text-align: left;
 }
 
-.cover-guide {
-    margin-top: 14px;
+.cover-stud-table td {
+    padding: 2px 8px;
+    border: none;
+    text-align: left;
+}
+
+.cover-guidance-title {
     font-size: 10pt;
-    line-height: 1.3;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    margin-top: 18px;
+}
+
+.cover-guide-name {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.cover-acad-year {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.cover-pg-num {
+    font-size: 10pt;
+    margin-top: 14px;
 }
 </style>
 </head>
@@ -287,59 +315,57 @@ table.data-table tr.even {
 
 <!-- ================= PAGE 1: COVER PAGE ================= -->
 <pdf:nexttemplate name="cover_template" />
-<div class="cover-wrapper">
-    <div class="cover-univ">Savitribai Phule Pune University</div>
-    <div class="cover-college">Modern Education Society’s Wadia College of Engineering, Pune</div>
-    <div class="cover-addr">19, Bund Garden, V.K. Joag Path, Pune – 411001.</div>
+<div class="cover-page-border">
+    <div class="cover-univ">SavitriBai Phule Pune University</div>
+    <div class="cover-college">
+        Modern Education Society’s Wadia College of<br>
+        Engineering, Pune
+    </div>
+    <div class="cover-addr">19, Bund Garden, V. K. Joag Path, Pune – 411001</div>
     <div class="cover-naac">ACCREDITED BY NBA AND NAAC WITH ‘A++’ GRADE</div>
     <div class="cover-dept">DEPARTMENT OF COMPUTER ENGINEERING</div>
-    
-    <div style="border-bottom: 1.5pt solid #111111; margin: 8px 30px 10px 30px;"></div>
 
-    <div class="cover-logo">
-        <img src="REPLACE_LOGO_PATH" height="95" alt="College Logo" />
+    <div class="cover-logo-div">
+        <img src="REPLACE_LOGO_PATH" height="105" alt="College Logo" />
     </div>
 
-    <div class="cover-rep-title">A MINI-PROJECT REPORT</div>
-    <div class="cover-on">ON</div>
-    <div class="cover-project-title">“Tweet Sentiment Analysis System Using Information Retrieval &amp; Machine Learning”</div>
+    <div class="cover-report-label">MINI PROJECT REPORT</div>
 
-    <div class="cover-acad">(Academic Year: 2026-27)</div>
-    <div class="cover-deg">B.E. (COMPUTER ENGINEERING)</div>
+    <div class="cover-proj-title">
+        Tweet Sentiment Analysis System Using Information Retrieval &amp; Machine Learning
+    </div>
 
-    <div class="cover-sub-by">SUBMITTED BY:</div>
-    <div style="font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Group Members:</div>
-    <table class="cover-members-table">
+    <div class="cover-deg">B. E. (COMPUTER)</div>
+
+    <div class="cover-sub-by">SUBMITTED BY</div>
+
+    <table class="cover-stud-table">
         <tr>
-            <td style="width: 10%; text-align: center; font-weight: bold;">1.</td>
-            <td style="width: 55%; font-weight: bold;">Aadish Sonawane</td>
-            <td style="width: 35%; text-align: right; font-weight: bold;">(Roll No: F23112052)</td>
+            <th style="width: 44%;">PRN No.</th>
+            <th style="width: 56%;">Student Name</th>
         </tr>
         <tr>
-            <td style="text-align: center; font-weight: bold;">2.</td>
-            <td style="font-weight: bold;">Aditya Raje</td>
-            <td style="text-align: right; font-weight: bold;">(Roll No: F23112050)</td>
+            <td>F23112052</td>
+            <td>Aadish Sonawane</td>
         </tr>
         <tr>
-            <td style="text-align: center; font-weight: bold;">3.</td>
-            <td style="font-weight: bold;">Mayur Langhi</td>
-            <td style="text-align: right; font-weight: bold;">(Roll No: F23112053)</td>
+            <td>F23112050</td>
+            <td>Aditya Raje</td>
+        </tr>
+        <tr>
+            <td>F23112053</td>
+            <td>Mayur Langhi</td>
         </tr>
     </table>
 
-    <div style="margin-top: 50px; text-align: right; padding-right: 20px;">
-        <div style="display: inline-block; text-align: center; width: 200px;">
-            <div style="height: 48px;"></div>
-            <div style="border-top: 1.2pt solid #111111; padding-top: 5px;">
-                <div style="font-weight: bold; font-size: 10.5pt;">Teacher's Signature</div>
-                <div style="font-weight: bold; font-size: 10pt; margin-top: 3px; color: #111111;">V. D. Gaikwad</div>
-            </div>
-        </div>
-    </div>
+    <div class="cover-guidance-title">UNDER THE GUIDANCE OF</div>
+    <div class="cover-guide-name">Prof. V. D. Gaikwad</div>
+    <div class="cover-acad-year">(Academic Year: 2026–2027)</div>
+    <div class="cover-pg-num">1</div>
 </div>
 
 <!-- ================= PAGE 2: INDEX ================= -->
-<pdf:nexttemplate name="cover_template" />
+<pdf:nexttemplate name="index_template" />
 <pdf:nextpage />
 <div style="padding: 10px 5px;">
     <h2 style="font-size: 14pt; text-align: center; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px;">INDEX</h2>

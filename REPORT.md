@@ -1,35 +1,36 @@
-# Savitribai Phule Pune University
-### Modern Education Society’s Wadia College of Engineering, Pune
-**19, Bund Garden, V.K. Joag Path, Pune – 411001.**  
-**ACCREDITED BY NBA AND NAAC WITH ’A++’ GRADE**  
+# SavitriBai Phule Pune University
+### Modern Education Society’s Wadia College of
+### Engineering, Pune
+**19, Bund Garden, V. K. Joag Path, Pune – 411001**  
+**ACCREDITED BY NBA AND NAAC WITH ‘A++’ GRADE**  
 **DEPARTMENT OF COMPUTER ENGINEERING**
-
----
 
 <br>
 
-# A MINI-PROJECT REPORT
+# MINI PROJECT REPORT
 ### ON
 # “Tweet Sentiment Analysis System Using Information Retrieval & Machine Learning”
 
-**(Academic Year: 2026-27)**  
-**B.E. (COMPUTER ENGINEERING)**
+**B. E. (COMPUTER)**
 
 <br>
 
-### SUBMITTED BY:
-**Group Members:**
-- **Aadish Sonawane** (Roll No: F23112052)
-- **Aditya Raje** (Roll No: F23112050)
-- **Mayur Langhi** (Roll No: F23112053)
+### SUBMITTED BY
 
-<br><br><br>
+| PRN No. | Student Name |
+|:---|:---|
+| **F23112052** | **Aadish Sonawane** |
+| **F23112050** | **Aditya Raje** |
+| **F23112053** | **Mayur Langhi** |
 
-<div align="right">
-  <p>__________________________<br>
-  <b>Teacher's Signature</b><br>
-  <b>V. D. Gaikwad</b></p>
-</div>
+<br>
+
+### UNDER THE GUIDANCE OF
+**Prof. V. D. Gaikwad**  
+**(Academic Year: 2026–2027)**  
+
+<br>
+<center>1</center>
 
 ---
 
