@@ -177,60 +177,60 @@ table.data-table tr.even {
 
 .cover-page-border {
     border: 2pt solid #000000;
-    padding: 14px 18px 12px 18px;
+    padding: 42px 18px 15px 18px;
     height: 250mm;
     text-align: center;
 }
 
 .cover-univ {
-    font-size: 14.5pt;
+    font-size: 15pt;
     font-weight: bold;
-    margin-top: 2px;
+    margin-top: 10px;
 }
 
 .cover-college {
     font-size: 13.5pt;
     font-weight: bold;
     line-height: 1.25;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .cover-addr {
     font-size: 9.5pt;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .cover-naac {
     font-size: 9.5pt;
     font-weight: bold;
     letter-spacing: 0.3px;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .cover-dept {
     font-size: 10.5pt;
     font-weight: bold;
     letter-spacing: 0.5px;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .cover-logo-div {
-    margin-top: 10px;
-    margin-bottom: 8px;
+    margin-top: 16px;
+    margin-bottom: 12px;
 }
 
 .cover-report-label {
-    font-size: 11.5pt;
+    font-size: 12pt;
     font-weight: bold;
     letter-spacing: 0.5px;
-    margin-top: 6px;
+    margin-top: 10px;
 }
 
 .cover-proj-title {
     font-size: 12pt;
     font-weight: bold;
     line-height: 1.35;
-    margin-top: 10px;
+    margin-top: 12px;
     margin-left: 15px;
     margin-right: 15px;
 }
@@ -238,58 +238,59 @@ table.data-table tr.even {
 .cover-deg {
     font-size: 11pt;
     font-weight: bold;
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 .cover-sub-by {
-    font-size: 10.5pt;
+    font-size: 11pt;
     font-weight: bold;
     letter-spacing: 0.5px;
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 .cover-stud-table {
     width: 60%;
-    margin: 8px auto 0 auto;
+    margin: 10px auto 0 auto;
     font-size: 10pt;
     border-collapse: collapse;
 }
 
 .cover-stud-table th {
     font-weight: bold;
-    padding: 2px 8px;
+    padding: 3px 8px;
     border: none;
     text-align: left;
 }
 
 .cover-stud-table td {
-    padding: 2px 8px;
+    padding: 3px 8px;
     border: none;
     text-align: left;
 }
 
 .cover-guidance-title {
-    font-size: 10pt;
+    font-size: 10.5pt;
     font-weight: bold;
     letter-spacing: 0.5px;
-    margin-top: 18px;
+    margin-top: 235px;
 }
 
 .cover-guide-name {
     font-size: 11pt;
     font-weight: bold;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .cover-acad-year {
     font-size: 10pt;
     font-weight: bold;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .cover-pg-num {
     font-size: 10pt;
-    margin-top: 14px;
+    margin-top: 40px;
+    margin-bottom: 10px;
 }
 </style>
 </head>
