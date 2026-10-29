@@ -173,88 +173,88 @@ table.data-table tr.even {
 }
 
 .cover-univ {
-    font-size: 15.5pt;
+    font-size: 15pt;
     font-weight: bold;
-    margin-top: 5px;
+    margin-top: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .cover-college {
-    font-size: 13pt;
+    font-size: 12.5pt;
     font-weight: bold;
-    margin-top: 6px;
+    margin-top: 5px;
 }
 
 .cover-addr {
-    font-size: 10pt;
-    margin-top: 3px;
+    font-size: 9.5pt;
+    margin-top: 2px;
 }
 
 .cover-naac {
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: bold;
-    margin-top: 3px;
+    margin-top: 2px;
     letter-spacing: 0.5px;
 }
 
 .cover-dept {
-    font-size: 12pt;
+    font-size: 11.5pt;
     font-weight: bold;
-    margin-top: 4px;
+    margin-top: 3px;
     letter-spacing: 0.5px;
 }
 
 .cover-logo {
-    margin-top: 14px;
-    margin-bottom: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .cover-rep-title {
-    font-size: 13.5pt;
+    font-size: 13pt;
     font-weight: bold;
     letter-spacing: 1px;
     margin-top: 4px;
 }
 
 .cover-on {
-    font-size: 11pt;
-    font-weight: bold;
-    margin-top: 4px;
-}
-
-.cover-project-title {
-    font-size: 14pt;
-    font-weight: bold;
-    font-style: italic;
-    color: #1a2a3a;
-    margin-top: 6px;
-    line-height: 1.25;
-}
-
-.cover-acad {
     font-size: 10.5pt;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.cover-deg {
-    font-size: 11pt;
     font-weight: bold;
     margin-top: 3px;
 }
 
-.cover-sub-by {
-    font-size: 10.5pt;
+.cover-project-title {
+    font-size: 13.5pt;
     font-weight: bold;
     font-style: italic;
-    margin-top: 14px;
+    color: #1a2a3a;
+    margin-top: 5px;
+    line-height: 1.25;
+}
+
+.cover-acad {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.cover-deg {
+    font-size: 10.5pt;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.cover-sub-by {
+    font-size: 10pt;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 10px;
 }
 
 .cover-members-table {
     width: 85%;
-    margin: 8px auto 0 auto;
-    font-size: 10pt;
+    margin: 6px auto 0 auto;
+    font-size: 9.5pt;
     text-align: left;
 }
 
@@ -294,10 +294,10 @@ table.data-table tr.even {
     <div class="cover-naac">ACCREDITED BY NBA AND NAAC WITH ‘A++’ GRADE</div>
     <div class="cover-dept">DEPARTMENT OF COMPUTER ENGINEERING</div>
     
-    <div style="border-bottom: 1.5pt solid #111111; margin: 10px 30px 12px 30px;"></div>
+    <div style="border-bottom: 1.5pt solid #111111; margin: 8px 30px 10px 30px;"></div>
 
     <div class="cover-logo">
-        <img src="REPLACE_LOGO_PATH" height="105" alt="College Logo" />
+        <img src="REPLACE_LOGO_PATH" height="95" alt="College Logo" />
     </div>
 
     <div class="cover-rep-title">A MINI-PROJECT REPORT</div>
@@ -308,7 +308,7 @@ table.data-table tr.even {
     <div class="cover-deg">B.E. (COMPUTER ENGINEERING)</div>
 
     <div class="cover-sub-by">SUBMITTED BY:</div>
-    <div style="font-weight: bold; font-size: 10pt; margin-top: 2px;">Group Members:</div>
+    <div style="font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Group Members:</div>
     <table class="cover-members-table">
         <tr>
             <td style="width: 10%; text-align: center; font-weight: bold;">1.</td>
@@ -327,12 +327,26 @@ table.data-table tr.even {
         </tr>
     </table>
 
-    <div class="cover-guide">
-        <div class="bold" style="font-size: 10.5pt;">Under the Guidance of:</div>
-        <div>Faculty of Computer Engineering</div>
-        <div>Department of Computer Engineering</div>
-        <div>Modern Education Society’s Wadia College of Engineering, Pune</div>
-    </div>
+    <table style="width: 100%; margin-top: 36px; border: none;">
+        <tr>
+            <td style="width: 55%; text-align: left; vertical-align: bottom; border: none; padding: 0 0 0 10px;">
+                <div style="font-weight: bold; font-size: 10pt;">Under the Guidance of:</div>
+                <div style="font-size: 9.5pt; margin-top: 2px;">Faculty &amp; Project Coordinator</div>
+                <div style="font-size: 8.5pt; color: #333333; margin-top: 1px;">Department of Computer Engineering</div>
+                <div style="font-size: 8.5pt; color: #333333; margin-top: 1px;">Modern Education Society’s Wadia College of Engineering, Pune</div>
+            </td>
+            <td style="width: 45%; text-align: right; vertical-align: bottom; border: none; padding: 0 10px 0 0;">
+                <div style="text-align: center; width: 190px; margin-left: auto;">
+                    <div style="height: 42px;"></div>
+                    <div style="border-top: 1pt solid #111111; padding-top: 4px;">
+                        <div style="font-weight: bold; font-size: 10pt;">Teacher's Signature</div>
+                        <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">(Staff In-Charge / Guide)</div>
+                        <div style="font-size: 8.5pt; color: #444444; margin-top: 3px;">Date: ________________</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <!-- ================= PAGE 2: INDEX ================= -->
