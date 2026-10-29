@@ -23,13 +23,13 @@
 - **Aditya Raje** (Roll No: F23112050)
 - **Mayur Langhi** (Roll No: F23112053)
 
-<br><br>
+<br><br><br>
 
-| **Under the Guidance of:** | **Teacher's Signature:** |
-|:---|---:|
-| Faculty & Project Coordinator | <br><br>__________________________ |
-| Department of Computer Engineering | **Staff In-Charge / Guide** |
-| Modern Education Society’s Wadia College of Engineering, Pune | Date: ____________________ |
+<div align="right">
+  <p>__________________________<br>
+  <b>Teacher's Signature</b><br>
+  <b>V. D. Gaikwad</b></p>
+</div>
 
 ---
 

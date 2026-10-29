@@ -327,26 +327,15 @@ table.data-table tr.even {
         </tr>
     </table>
 
-    <table style="width: 100%; margin-top: 36px; border: none;">
-        <tr>
-            <td style="width: 55%; text-align: left; vertical-align: bottom; border: none; padding: 0 0 0 10px;">
-                <div style="font-weight: bold; font-size: 10pt;">Under the Guidance of:</div>
-                <div style="font-size: 9.5pt; margin-top: 2px;">Faculty &amp; Project Coordinator</div>
-                <div style="font-size: 8.5pt; color: #333333; margin-top: 1px;">Department of Computer Engineering</div>
-                <div style="font-size: 8.5pt; color: #333333; margin-top: 1px;">Modern Education Society’s Wadia College of Engineering, Pune</div>
-            </td>
-            <td style="width: 45%; text-align: right; vertical-align: bottom; border: none; padding: 0 10px 0 0;">
-                <div style="text-align: center; width: 190px; margin-left: auto;">
-                    <div style="height: 42px;"></div>
-                    <div style="border-top: 1pt solid #111111; padding-top: 4px;">
-                        <div style="font-weight: bold; font-size: 10pt;">Teacher's Signature</div>
-                        <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">(Staff In-Charge / Guide)</div>
-                        <div style="font-size: 8.5pt; color: #444444; margin-top: 3px;">Date: ________________</div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div style="margin-top: 50px; text-align: right; padding-right: 20px;">
+        <div style="display: inline-block; text-align: center; width: 200px;">
+            <div style="height: 48px;"></div>
+            <div style="border-top: 1.2pt solid #111111; padding-top: 5px;">
+                <div style="font-weight: bold; font-size: 10.5pt;">Teacher's Signature</div>
+                <div style="font-weight: bold; font-size: 10pt; margin-top: 3px; color: #111111;">V. D. Gaikwad</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- ================= PAGE 2: INDEX ================= -->
